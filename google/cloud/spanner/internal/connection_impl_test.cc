@@ -703,21 +703,51 @@ TEST(ConnectionImplTest, ExecuteQueryImplicitBeginTransaction) {
 TEST(ConnectionImplTest, QueryOptions) {
   auto constexpr kQueryOptionsProp =
       &spanner_proto::ExecuteSqlRequest::query_options;
-  std::vector<absl::optional<std::string>> const optimizer_versions = {
-      {}, "", "some-version"};
+  // A helper function to make constructing QueryOptions protos inline possible.
+  auto const make_qo_proto = [](absl::optional<std::string> version,
+                                absl::optional<std::string> stats) {
+    spanner_proto::ExecuteSqlRequest::QueryOptions proto;
+    if (version) proto.set_optimizer_version(*version);
+    if (stats) proto.set_optimizer_statistics_package(*stats);
+    return proto;
+  };
 
-  for (auto const& version : optimizer_versions) {
-    spanner_proto::ExecuteSqlRequest::QueryOptions qo;
-    if (version) qo.set_optimizer_version(*version);
+  struct {
+    spanner_proto::ExecuteSqlRequest::QueryOptions qo_proto;
+    QueryOptions qo_struct;
+  } test_cases[] = {
+      {{}, {}},
+
+      // Optimizer version alone
+      {make_qo_proto("", {}), QueryOptions().set_optimizer_version("")},
+      {make_qo_proto("some-version", {}),
+       QueryOptions().set_optimizer_version("some-version")},
+
+      // Optimizer stats package alone
+      {make_qo_proto({}, ""),
+       QueryOptions().set_optimizer_statistics_package("")},
+      {make_qo_proto({}, "some-stats"),
+       QueryOptions().set_optimizer_statistics_package("some-stats")},
+
+      // Both options
+      {make_qo_proto("", ""), QueryOptions()
+                                  .set_optimizer_version("")
+                                  .set_optimizer_statistics_package("")},
+      {make_qo_proto("some-version", "some-stats"),
+       QueryOptions()
+           .set_optimizer_version("some-version")
+           .set_optimizer_statistics_package("some-stats")},
+  };
+
+  for (auto const& tc : test_cases) {
+    spanner_proto::ExecuteSqlRequest::QueryOptions qo = tc.qo_proto;
     auto m = Property(kQueryOptionsProp, IsProtoEqual(qo));
     auto mock = std::make_shared<spanner_testing::MockSpannerStub>();
 
-    auto txn = MakeReadOnlyTransaction(spanner::Transaction::ReadOnlyOptions());
-    auto query_options = spanner::QueryOptions().set_optimizer_version(version);
-    auto params = spanner::Connection::SqlParams{txn, spanner::SqlStatement{},
-                                                 query_options};
-    auto db = spanner::Database("dummy_project", "dummy_instance",
-                                "dummy_database_id");
+    auto txn = MakeReadOnlyTransaction(Transaction::ReadOnlyOptions());
+    auto query_options = tc.qo_struct;
+    auto params = Connection::SqlParams{txn, SqlStatement{}, query_options};
+    auto db = Database("dummy_project", "dummy_instance", "dummy_database_id");
     auto conn = MakeConnection(
         db, {mock},
         spanner::ConnectionOptions{grpc::InsecureChannelCredentials()});

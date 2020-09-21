@@ -553,6 +553,11 @@ StatusOr<ResultType> ConnectionImpl::ExecuteSqlImpl(
         *params.query_options.optimizer_version());
   }
 
+  if (params.query_options.optimizer_statistics_package()) {
+    request.mutable_query_options()->set_optimizer_statistics_package(
+        *params.query_options.optimizer_statistics_package());
+  }
+
   for (;;) {
     auto reader = retry_resume_fn(request);
     if (s->has_begin()) {
