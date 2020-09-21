@@ -50,11 +50,11 @@ TEST(QueryOptionsTest, OptimizerStatisticsPackage) {
 
   copy.set_optimizer_statistics_package("");
   EXPECT_NE(copy, default_constructed);
-  EXPECT_EQ("", copy.optimizer_version().value());
+  EXPECT_EQ("", copy.optimizer_statistics_package().value());
 
   copy.set_optimizer_statistics_package("foo");
   EXPECT_NE(copy, default_constructed);
-  EXPECT_EQ("foo", copy.optimizer_version().value());
+  EXPECT_EQ("foo", copy.optimizer_statistics_package().value());
 
   copy.set_optimizer_statistics_package(absl::nullopt);
   EXPECT_EQ(copy, default_constructed);
