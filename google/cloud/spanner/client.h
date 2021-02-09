@@ -51,6 +51,7 @@ namespace cloud {
 namespace spanner {
 inline namespace SPANNER_CLIENT_NS {
 
+// clang-format off
 /**
  * Performs database client operations on Spanner.
  *
@@ -116,6 +117,7 @@ inline namespace SPANNER_CLIENT_NS {
  * [spanner-doc-link]:
  * https://cloud.google.com/spanner/docs/api-libraries-overview
  */
+// clang-format on
 class Client {
  public:
   /**
