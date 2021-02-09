@@ -714,27 +714,28 @@ TEST(ConnectionImplTest, QueryOptions) {
 
   struct {
     spanner_proto::ExecuteSqlRequest::QueryOptions qo_proto;
-    QueryOptions qo_struct;
+    spanner::QueryOptions qo_struct;
   } test_cases[] = {
       {{}, {}},
 
       // Optimizer version alone
-      {make_qo_proto("", {}), QueryOptions().set_optimizer_version("")},
+      {make_qo_proto("", {}),
+       spanner::QueryOptions().set_optimizer_version("")},
       {make_qo_proto("some-version", {}),
-       QueryOptions().set_optimizer_version("some-version")},
+       spanner::QueryOptions().set_optimizer_version("some-version")},
 
       // Optimizer stats package alone
       {make_qo_proto({}, ""),
-       QueryOptions().set_optimizer_statistics_package("")},
+       spanner::QueryOptions().set_optimizer_statistics_package("")},
       {make_qo_proto({}, "some-stats"),
-       QueryOptions().set_optimizer_statistics_package("some-stats")},
+       spanner::QueryOptions().set_optimizer_statistics_package("some-stats")},
 
       // Both options
-      {make_qo_proto("", ""), QueryOptions()
+      {make_qo_proto("", ""), spanner::QueryOptions()
                                   .set_optimizer_version("")
                                   .set_optimizer_statistics_package("")},
       {make_qo_proto("some-version", "some-stats"),
-       QueryOptions()
+       spanner::QueryOptions()
            .set_optimizer_version("some-version")
            .set_optimizer_statistics_package("some-stats")},
   };
@@ -744,10 +745,12 @@ TEST(ConnectionImplTest, QueryOptions) {
     auto m = Property(kQueryOptionsProp, IsProtoEqual(qo));
     auto mock = std::make_shared<spanner_testing::MockSpannerStub>();
 
-    auto txn = MakeReadOnlyTransaction(Transaction::ReadOnlyOptions());
+    auto txn = MakeReadOnlyTransaction(spanner::Transaction::ReadOnlyOptions());
     auto query_options = tc.qo_struct;
-    auto params = Connection::SqlParams{txn, SqlStatement{}, query_options};
-    auto db = Database("dummy_project", "dummy_instance", "dummy_database_id");
+    auto params = spanner::Connection::SqlParams{txn, spanner::SqlStatement{},
+                                                 query_options};
+    auto db = spanner::Database("dummy_project", "dummy_instance",
+                                "dummy_database_id");
     auto conn = MakeConnection(
         db, {mock},
         spanner::ConnectionOptions{grpc::InsecureChannelCredentials()});
