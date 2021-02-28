@@ -91,7 +91,6 @@ if [[ "${BUILD_NAME}" = "clang-tidy" ]]; then
   export CHECK_MARKDOWN=yes
   export GENERATE_DOCS=yes
   export CLANG_TIDY=yes
-  export IWYU=yes
   export TEST_INSTALL=yes
   : "${RUN_INTEGRATION_TESTS:=no}" # Don't run integration tests by default.
   in_docker_script="ci/kokoro/docker/build-in-docker-cmake.sh"
@@ -503,7 +502,8 @@ docker_flags=(
   # only the CMake builds use this flag.
   "--env" "CLANG_TIDY=${CLANG_TIDY:-}"
 
-  # XXX
+  # If set to 'yes', the build script will run include-what-you-use. Currently
+  # only the CMake builds use this flag.
   "--env" "IWYU=${IWYU:-}"
 
   # If set to 'no', skip the integration tests.

@@ -169,12 +169,6 @@ io::log_yellow "started build"
 ${CMAKE_COMMAND} --build "${BINARY_DIR}" -- -j "${NCPU}"
 io::log_yellow "finished build"
 
-# if [[ "${IWYU:-}" == "yes" ]]; then
-#   io::log_yellow "Running IWYU"
-#   iwyu_tool.py -p "${BINARY_DIR}"
-#   io::log_yellow "Finished IWYU"
-# fi
-
 readonly TEST_JOB_COUNT="${NCPU}"
 
 ctest_args=("--output-on-failure" "-j" "${TEST_JOB_COUNT}")

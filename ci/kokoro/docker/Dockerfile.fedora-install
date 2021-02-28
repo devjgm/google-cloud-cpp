@@ -130,11 +130,18 @@ RUN curl -sSL https://github.com/nlohmann/json/archive/v3.9.0.tar.gz | \
     ldconfig && \
     cd /var/tmp && rm -fr build
 
+# iwyu needs to be installed /usr because that's where clang is also installed,
+# and iwyu needs to be able to find clang's headers. To debug problems about
+# this, compare the output of the following commands:
+#   $ include-what-you-use -print-resource-dir
+#   $ clang -print-resource-dir
+# See https://github.com/include-what-you-use/include-what-you-use#how-to-install
 WORKDIR /var/tmp/build
 RUN curl -sSL https://github.com/include-what-you-use/include-what-you-use/archive/0.15.tar.gz | \
     tar -xzf - --strip-components=1 && \
     cmake \
       -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_PREFIX=/usr \
       -DBUILD_TESTING=OFF \
       -H. -Bcmake-out/iwyu && \
     cmake --build cmake-out/iwyu --target install -- -j ${NCPU} && \
