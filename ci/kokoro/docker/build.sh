@@ -91,8 +91,17 @@ if [[ "${BUILD_NAME}" = "clang-tidy" ]]; then
   export CHECK_MARKDOWN=yes
   export GENERATE_DOCS=yes
   export CLANG_TIDY=yes
+  export IWYU=yes
   export TEST_INSTALL=yes
   : "${RUN_INTEGRATION_TESTS:=no}" # Don't run integration tests by default.
+  in_docker_script="ci/kokoro/docker/build-in-docker-cmake.sh"
+elif [[ "${BUILD_NAME}" = "iwyu" ]]; then
+  export DISTRO=fedora-install
+  export DISTRO_VERSION=33
+  export CC=clang
+  export CXX=clang++
+  export BUILD_TYPE=Debug
+  export IWYU=yes
   in_docker_script="ci/kokoro/docker/build-in-docker-cmake.sh"
 elif [[ "${BUILD_NAME}" = "coverage" ]]; then
   export DISTRO=fedora-install
@@ -493,6 +502,9 @@ docker_flags=(
   # If set to 'yes', the build script will configure clang-tidy. Currently
   # only the CMake builds use this flag.
   "--env" "CLANG_TIDY=${CLANG_TIDY:-}"
+
+  # XXX
+  "--env" "IWYU=${IWYU:-}"
 
   # If set to 'no', skip the integration tests.
   "--env" "RUN_INTEGRATION_TESTS=${RUN_INTEGRATION_TESTS:-}"
