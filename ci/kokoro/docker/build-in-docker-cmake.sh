@@ -76,6 +76,7 @@ if [[ "${BUILD_TESTING:-}" == "no" ]]; then
 fi
 
 if [[ "${CLANG_TIDY:-}" == "yes" ]]; then
+  cmake_extra_flags+=("-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use")
   cmake_extra_flags+=("-DCMAKE_EXPORT_COMPILE_COMMANDS=ON")
   # On pre-submit builds we run clang-tidy on only the changed files (see below)
   # in other cases (interactive builds, continuous builds) we run clang-tidy as

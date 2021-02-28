@@ -21,10 +21,11 @@ ARG NCPU=4
 # tools to compile the dependencies:
 RUN dnf makecache && \
     dnf install -y abi-compliance-checker abi-dumper ccache \
-        clang clang-tools-extra cmake diffutils doxygen findutils gcc-c++ git \
-        grpc-devel grpc-plugins lcov libcxx-devel libcxxabi-devel libcurl-devel \
-        make ninja-build npm openssl-devel pkgconfig protobuf-compiler python \
-        python3.8 python-pip ShellCheck tar unzip w3m wget which zlib-devel
+        clang clang-devel clang-tools-extra cmake diffutils doxygen findutils \
+        gcc-c++ git grpc-devel grpc-plugins lcov libcxx-devel libcxxabi-devel \
+        libcurl-devel llvm-devel make ninja-build npm openssl-devel pkgconfig \
+        protobuf-compiler python python3.8 python-pip ShellCheck tar unzip w3m \
+        wget which zlib-devel
 
 # Sets root's password to the empty string to enable users to get a root shell
 # inside the container with `su -` and no password. Sudo would not work because
@@ -126,6 +127,17 @@ RUN curl -sSL https://github.com/nlohmann/json/archive/v3.9.0.tar.gz | \
       -DBUILD_TESTING=OFF \
       -H. -Bcmake-out/nlohmann/json && \
     cmake --build cmake-out/nlohmann/json --target install -- -j ${NCPU} && \
+    ldconfig && \
+    cd /var/tmp && rm -fr build
+
+WORKDIR /var/tmp/build
+RUN curl -sSL https://github.com/include-what-you-use/include-what-you-use/archive/0.15.tar.gz | \
+    tar -xzf - --strip-components=1 && \
+    cmake \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_TESTING=OFF \
+      -H. -Bcmake-out/iwyu && \
+    cmake --build cmake-out/iwyu --target install -- -j ${NCPU} && \
     ldconfig && \
     cd /var/tmp && rm -fr build
 
