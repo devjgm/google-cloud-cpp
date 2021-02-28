@@ -85,9 +85,9 @@ if [[ "${CLANG_TIDY:-}" == "yes" ]]; then
   fi
 fi
 
-# if [[ "${IWYU:-}" == "yes" ]]; then
-#   cmake_extra_flags+=("-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use")
-# fi
+if [[ "${IWYU:-}" == "yes" ]]; then
+  cmake_extra_flags+=("-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use")
+fi
 
 if [[ "${GOOGLE_CLOUD_CPP_CXX_STANDARD:-}" != "" ]]; then
   cmake_extra_flags+=(
@@ -169,11 +169,11 @@ io::log_yellow "started build"
 ${CMAKE_COMMAND} --build "${BINARY_DIR}" -- -j "${NCPU}"
 io::log_yellow "finished build"
 
-if [[ "${IWYU:-}" == "yes" ]]; then
-  io::log_yellow "Running IWYU"
-  iwyu_tool.py -p "${BINARY_DIR}"
-  io::log_yellow "Finished IWYU"
-fi
+# if [[ "${IWYU:-}" == "yes" ]]; then
+#   io::log_yellow "Running IWYU"
+#   iwyu_tool.py -p "${BINARY_DIR}"
+#   io::log_yellow "Finished IWYU"
+# fi
 
 readonly TEST_JOB_COUNT="${NCPU}"
 
