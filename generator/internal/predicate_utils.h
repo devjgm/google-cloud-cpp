@@ -17,6 +17,7 @@
 #include "google/cloud/optional.h"
 #include <google/protobuf/descriptor.h>
 #include <functional>
+#include <string>
 #include <vector>
 
 namespace google {

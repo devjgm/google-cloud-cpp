@@ -18,6 +18,7 @@
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/io/zero_copy_stream.h>
 #include <gmock/gmock.h>
+#include <string>
 
 namespace google {
 namespace cloud {

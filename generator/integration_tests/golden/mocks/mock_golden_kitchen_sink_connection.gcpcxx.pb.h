@@ -20,6 +20,7 @@
 
 #include "generator/integration_tests/golden/golden_kitchen_sink_connection.gcpcxx.pb.h"
 #include <gmock/gmock.h>
+#include <string>
 
 namespace google {
 namespace cloud {

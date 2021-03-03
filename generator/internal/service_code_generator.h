@@ -20,6 +20,8 @@
 #include "generator/internal/generator_interface.h"
 #include "generator/internal/printer.h"
 #include <google/protobuf/descriptor.h>
+#include <string>
+#include <vector>
 
 namespace google {
 namespace cloud {
