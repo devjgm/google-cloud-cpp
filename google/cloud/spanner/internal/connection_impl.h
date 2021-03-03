@@ -26,6 +26,7 @@
 #include "google/cloud/spanner/version.h"
 #include "google/cloud/background_threads.h"
 #include "google/cloud/backoff_policy.h"
+#include "google/cloud/internal/options.h"
 #include "google/cloud/status.h"
 #include "google/cloud/status_or.h"
 #include <google/spanner/v1/spanner.pb.h>
